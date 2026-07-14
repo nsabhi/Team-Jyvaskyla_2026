@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finn Bangla Cricket 2026 - Team Jyväskylä Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Colors matching the logo */
+        .bg-crest-dark { background-color: #0d121d; }
+        .bg-crest-card { background-color: #172033; }
+        .bg-crest-accent-blue { background-color: #2b54a2; }
+        .bg-crest-gold { background-color: #ecb131; }
+        .text-crest-gold { color: #ecb131; }
+        .border-crest-gold { border-color: #ecb131; }
+    </style>
+</head>
+<body class="bg-crest-dark text-white font-sans min-h-screen pb-12">
+
+    <!-- Header: Dynamic height, padding, and text sizing for mobile vs desktop -->
+    <header class="bg-crest-accent-blue border-b-4 border-crest-gold text-white py-6 md:py-8 text-center shadow-2xl mb-6 md:mb-8 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+        
+        <div class="relative z-10 flex flex-col items-center gap-3 md:gap-4 max-w-4xl mx-auto px-4">
+            <!-- Responsive Logo Container -->
+            <div class="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-crest-gold overflow-hidden bg-slate-900 shadow-xl flex items-center justify-center transition-transform hover:scale-105 duration-300">
+                <img src="Logo_image.png" alt="Team Jyväskylä Logo" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Title: Scales dynamically from mobile (text-2xl) to desktop (text-5xl) -->
+            <div>
+                <h1 class="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-wider text-crest-gold drop-shadow-md leading-tight">
+                    Finn Bangla Cricket 2026
+                </h1>
+                <p class="text-[10px] sm:text-xs md:text-sm uppercase tracking-widest font-bold mt-1.5 text-gray-200">
+                    Official Fixtures Platform • Hosted by Team Jyväskylä
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Wrapper with responsive padding -->
+    <main class="max-w-6xl mx-auto px-3 sm:px-6">
+        
+        <!-- Tab Navigation: Stacks vertically on mobile, horizontally on tablets+ -->
+        <div class="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-8">
+            <button onclick="switchTab('main')" id="btn-main" class="w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-sm md:text-base">
+                Main Tournament Groups
+            </button>
+            <button onclick="switchTab('qualifier')" id="btn-qualifier" class="w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-sm md:text-base">
+                Qualifier Groups
+            </button>
+        </div>
+
+        <!-- Fixtures Grid: 1 column on mobile, 2 columns on tablets, 3 columns on desktop -->
+        <div id="fixtures-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <!-- Cards generated dynamically -->
+        </div>
+    </main>
+
+    <script>
+        const tournamentData = {
+            main: {
+                "Group A": ["Royal Strikers", "Qualifier Rank 3", "Qualifier Rank 14"],
+                "Group B": ["Kuopion Tigers", "Helsinki Tigers", "Qualifier Rank 11"],
+                "Group C": ["Team Jyväskylä", "Qualifier Rank 1", "Qualifier Rank 12"],
+                "Group D": ["Malmi Supernova", "Qualifier Rank 5", "Qualifier Rank 8"],
+                "Group E": ["Otaniemi Mavericks", "Vaasan Royal Bangals", "Qualifier Rank 10"],
+                "Group F": ["Team Tampere", "Southern Kings", "Qualifier Rank 6"],
+                "Group G": ["Tampere Bengal Sporting Club", "Helsinki Fighters", "Qualifier Rank 9"],
+                "Group H": ["Helsinki Boys", "Qualifier Rank 2", "Qualifier Rank 7"],
+                "Group I": ["Turku Tigers", "Old Boys Return", "Qualifier Rank 13"],
+                "Group J": ["Pasila Vikings", "Qualifier Rank 4", "Qualifier Rank 15"]
+            },
+            qualifier: {
+                "Group A": ["Vanha Kaupunki", "Stadin Warriors", "Pukinmäki Sporting Club"],
+                "Group B": ["Metro Strikers", "Kamppi Knight Riders", "Turku Bangla"],
+                "Group C": ["Pietarsaari Sporting Club", "Team Joensuu", "ITIS Sports"],
+                "Group D": ["Lahti Lions", "Jyväskylä", "Myyrmäki Kings"],
+                "Group E": ["Saimaan Gladiators", "Uusimaa Challengers", "Nordic Capitals"],
+                "Group F": ["Sipoo Eleven", "Espoo Eagles", "United Tampere"],
+                "Group G": ["Åbo Cowboys", "Seinäjoki Gladiators", "Kokkola Falcon"],
+                "Group H": ["Oulun Arctic Tiger", "Jyväskylän Tigers", "Helsinki Boys 2.0"],
+                "Group J": ["Domus Tampere", "Savon Royals", "Kotka Mavericks"]
+            }
+        };
+
+        function generate3TeamFixtures(teams) {
+            return [
+                { home: teams[0], away: teams[1], matchNo: 1 },
+                { home: teams[1], away: teams[2], matchNo: 2 },
+                { home: teams[2], away: teams[0], matchNo: 3 }
+            ];
+        }
+
+        function renderFixtures(stage) {
+            const grid = document.getElementById('fixtures-grid');
+            grid.innerHTML = '';
+
+            const groups = tournamentData[stage];
+
+            for (const [groupName, teams] of Object.entries(groups)) {
+                const fixtures = generate3TeamFixtures(teams);
+
+                const card = document.createElement('div');
+                // Added touch-friendly subtle scaling (scale-[1.02]) so mobile users don't accidentally zoom too much when scrolling
+                card.className = "bg-crest-card border-t-4 border-crest-gold rounded-xl p-4 sm:p-5 shadow-lg flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl cursor-pointer";
+
+                let matchesHTML = '';
+                fixtures.forEach(match => {
+                    // Highlight Team Jyväskylä matches in gold
+                    const isJyvHome = match.home.includes("Jyväskylä");
+                    const isJyvAway = match.away.includes("Jyväskylä");
+
+                    matchesHTML += `
+                        <div class="flex justify-between items-center bg-slate-900 p-2.5 sm:p-3 rounded-lg border border-slate-800 hover:border-slate-700 transition-colors gap-1 min-w-0">
+                            <span class="w-5/12 text-right font-semibold text-xs sm:text-sm truncate ${isJyvHome ? 'text-crest-gold font-bold' : 'text-gray-200'}" title="${match.home}">${match.home}</span>
+                            <span class="w-2/12 text-center text-[10px] sm:text-xs font-black text-crest-gold opacity-80 shrink-0">VS</span>
+                            <span class="w-5/12 text-left font-semibold text-xs sm:text-sm truncate ${isJyvAway ? 'text-crest-gold font-bold' : 'text-gray-200'}" title="${match.away}">${match.away}</span>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
+                        <h2 class="text-lg sm:text-xl font-black tracking-wide text-crest-gold">${groupName}</h2>
+                        <span class="text-[9px] sm:text-[10px] uppercase bg-slate-800 text-gray-400 px-2 sm:px-2.5 py-1 rounded-full font-bold">3 Matches</span>
+                    </div>
+                    <div class="space-y-2.5 sm:space-y-3">
+                        ${matchesHTML}
+                    </div>
+                `;
+                grid.appendChild(card);
+            }
+        }
+
+        function switchTab(stage) {
+            const btnMain = document.getElementById('btn-main');
+            const btnQual = document.getElementById('btn-qualifier');
+
+            if (stage === 'main') {
+                btnMain.className = "w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-sm md:text-base";
+                btnQual.className = "w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-sm md:text-base";
+            } else {
+                btnQual.className = "w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-sm md:text-base";
+                btnMain.className = "w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-sm md:text-base";
+            }
+            renderFixtures(stage);
+        }
+
+        renderFixtures('main');
+    </script>
+</body>
+</html>
