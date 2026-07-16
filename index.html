@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Finn Bangla Cricket 2026 - Team Jyväskylä Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for dynamic icons in the new sections -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Custom Colors matching the logo */
@@ -15,109 +14,103 @@
         .bg-crest-gold { background-color: #ecb131; }
         .text-crest-gold { color: #ecb131; }
         .border-crest-gold { border-color: #ecb131; }
+        
+        /* Custom scrollbar hiding for swipeable day filters on mobile */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
-<body class="bg-crest-dark text-white font-sans min-h-screen pb-12">
+<body class="bg-crest-dark text-white font-sans min-h-screen pb-12 antialiased selection:bg-crest-gold selection:text-slate-900">
 
-    <!-- Header: Dynamic height, padding, and text sizing -->
-    <header class="bg-crest-accent-blue border-b-4 border-crest-gold text-white py-6 md:py-8 text-center shadow-2xl mb-6 md:mb-8 relative overflow-hidden">
+    <header class="bg-crest-accent-blue border-b-4 border-crest-gold text-white py-6 md:py-10 text-center shadow-2xl mb-6 md:mb-8 relative overflow-hidden">
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
         <div class="relative z-10 flex flex-col items-center gap-3 md:gap-4 max-w-4xl mx-auto px-4">
-            <!-- Responsive Logo Container -->
-            <div class="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-crest-gold overflow-hidden bg-slate-900 shadow-xl flex items-center justify-center transition-transform hover:scale-105 duration-300">
+            <div class="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 lg:w-32 lg:h-32 rounded-full border-4 border-crest-gold overflow-hidden bg-slate-900 shadow-xl flex items-center justify-center transition-transform hover:scale-105 duration-300">
                 <img src="Logo_image.png" alt="Team Jyväskylä Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/200x200/172033/ecb131?text=FBCT'">
             </div>
 
-            <!-- Title: Scales dynamically -->
             <div>
-                <h1 class="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-wider text-crest-gold drop-shadow-md leading-tight">
+                <h1 class="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase tracking-wider text-crest-gold drop-shadow-md leading-tight">
                     Finn Bangla Cricket 2026
                 </h1>
-                <p class="text-[10px] sm:text-xs md:text-sm uppercase tracking-widest font-bold mt-1.5 text-gray-200">
-                    Official Fixtures Team squad Platform • Hosted by Team Jyväskylä
+                <p class="text-[9px] sm:text-xs md:text-sm uppercase tracking-widest font-semibold mt-1.5 text-gray-200 px-2">
+                    Official Fixtures &amp; Squad Platform • Hosted by Team Jyväskylä
                 </p>
             </div>
         </div>
     </header>
 
-    <!-- Main Wrapper with responsive padding -->
-    <main class="max-w-6xl mx-auto px-3 sm:px-6">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <!-- Tab Navigation: 4 Buttons beside each other (responsive grids) -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-8">
-            <button onclick="switchTab('main')" id="btn-main" class="w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base">
-                Main Tournament Groups
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 mb-8">
+            <button onclick="switchTab('main')" id="btn-main" class="w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base cursor-pointer">
+                Main Groups
             </button>
-            <button onclick="switchTab('qualifier')" id="btn-qualifier" class="w-full px-4 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base">
+            <button onclick="switchTab('qualifier')" id="btn-qualifier" class="w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base cursor-pointer">
                 Qualifier Groups
             </button>
-            <button onclick="switchTab('fixtures')" id="btn-fixtures" class="w-full px-4 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base">
+            <button onclick="switchTab('fixtures')" id="btn-fixtures" class="w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base cursor-pointer">
                 Fixtures
             </button>
-            <button onclick="switchTab('team-squad')" id="btn-team-squad" class="w-full px-4 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base">
+            <button onclick="switchTab('team-squad')" id="btn-team-squad" class="w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base cursor-pointer">
                 Team Squad
             </button>
         </div>
 
-        <!-- Groups View Container (Main / Qualifier Groups) -->
         <div id="groups-container" class="block">
-            <!-- Fixtures Grid: 1 column on mobile, 2 on tablets, 3 on desktop -->
             <div id="fixtures-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                <!-- Cards generated dynamically -->
-            </div>
+                </div>
         </div>
 
-        <!-- Fixtures View Container (Houses Match Schedules with filters) -->
-        <div id="fixtures-schedule-container" class="hidden space-y-8">
+        <div id="fixtures-schedule-container" class="hidden space-y-6">
             <div class="bg-crest-card border-t-4 border-crest-gold rounded-xl p-4 sm:p-6 shadow-lg">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
                     <div>
-                        <h2 class="text-xl sm:text-2xl font-black text-crest-gold tracking-wide uppercase">Match Schedules &amp; Stages</h2>
+                        <h2 class="text-lg sm:text-xl md:text-2xl font-black text-crest-gold tracking-wide uppercase">Match Schedules &amp; Stages</h2>
                         <p class="text-xs text-gray-400 mt-1">Full schedule broken down by daily timetables, group rounds, and final brackets.</p>
                     </div>
                     
-                    <!-- Search inside schedules -->
                     <div class="relative w-full md:w-72">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-                        <input type="text" id="schedule-search" oninput="filterSchedules()" placeholder="Search team, venue, or group..." class="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs focus:outline-none focus:border-crest-gold text-white placeholder-gray-500">
+                        <input type="text" id="schedule-search" oninput="filterSchedules()" placeholder="Search team, venue, or group..." class="w-full pl-9 pr-4 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs focus:outline-none focus:border-crest-gold text-white placeholder-gray-500">
                     </div>
                 </div>
 
-                <!-- Sub-tabs to filter (Including Friday, Saturday, Sunday, and your stage requests) -->
-                <div class="flex flex-wrap gap-2 mb-6">
-                    <button onclick="switchScheduleDay('Friday')" id="day-btn-Friday" class="px-4 py-2 text-xs font-bold rounded-md bg-crest-gold text-slate-900 shadow">Friday</button>
-                    <button onclick="switchScheduleDay('Saturday')" id="day-btn-Saturday" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Saturday</button>
-                    <button onclick="switchScheduleDay('Sunday')" id="day-btn-Sunday" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Sunday</button>
-                    <!-- Stage tabs added right after Sunday -->
-                    <button onclick="switchScheduleDay('Qualify_Round')" id="day-btn-Qualify_Round" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Qualify Round</button>
-                    <button onclick="switchScheduleDay('Main_Round')" id="day-btn-Main_Round" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Main Round</button>
-                    <button onclick="switchScheduleDay('Knockout_Round')" id="day-btn-Knockout_Round" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Knockout Round</button>
+                <div class="flex overflow-x-auto md:flex-wrap gap-2 pb-3 md:pb-0 mb-6 no-scrollbar -mx-4 px-4 md:mx-0 md:px-0 whitespace-nowrap">
+                    <button onclick="switchScheduleDay('Friday')" id="day-btn-Friday" class="inline-block px-4 py-2.5 text-xs font-bold rounded-md bg-crest-gold text-slate-900 shadow transition-colors cursor-pointer">Friday</button>
+                    <button onclick="switchScheduleDay('Saturday')" id="day-btn-Saturday" class="inline-block px-4 py-2.5 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800 transition-colors cursor-pointer">Saturday</button>
+                    <button onclick="switchScheduleDay('Sunday')" id="day-btn-Sunday" class="inline-block px-4 py-2.5 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800 transition-colors cursor-pointer">Sunday</button>
+                    <button onclick="switchScheduleDay('Qualify_Round')" id="day-btn-Qualify_Round" class="inline-block px-4 py-2.5 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800 transition-colors cursor-pointer">Qualify Round</button>
+                    <button onclick="switchScheduleDay('Main_Round')" id="day-btn-Main_Round" class="inline-block px-4 py-2.5 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800 transition-colors cursor-pointer">Main Round</button>
+                    <button onclick="switchScheduleDay('Knockout_Round')" id="day-btn-Knockout_Round" class="inline-block px-4 py-2.5 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800 transition-colors cursor-pointer">Knockout Round</button>
                 </div>
 
-                <!-- Live match counter -->
-                <div class="text-xs text-gray-400 mb-4">
+                <div class="text-xs text-gray-400 mb-4 flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     Showing <span id="schedule-match-count" class="text-crest-gold font-bold">0</span> matches
                 </div>
 
-                <!-- Match List Container -->
                 <div id="schedule-matches-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Loaded dynamically via JavaScript -->
-                </div>
+                    </div>
             </div>
         </div>
 
-        <!-- Team Squad View Container (Kept clean and empty for future squad data insertion) -->
         <div id="squads-container" class="hidden space-y-8">
-            <div class="bg-crest-card border-t-4 border-crest-gold rounded-xl p-8 text-center shadow-lg max-w-2xl mx-auto">
+            <div class="bg-crest-card border-t-4 border-crest-gold rounded-xl p-6 sm:p-10 text-center shadow-lg max-w-xl mx-auto">
                 <div class="text-crest-gold text-5xl mb-4">
                     <i class="fa-solid fa-users-rectangle"></i>
                 </div>
-                <h2 class="text-2xl font-black tracking-wide uppercase text-crest-gold">Team Squads</h2>
-                <p class="text-sm text-gray-400 mt-2 max-w-md mx-auto">
+                <h2 class="text-xl sm:text-2xl font-black tracking-wide uppercase text-crest-gold">Team Squads</h2>
+                <p class="text-xs sm:text-sm text-gray-400 mt-2 max-w-sm mx-auto leading-relaxed">
                     The rosters and player profiles for the tournament teams are currently being processed and will be published here soon.
                 </p>
-                <div class="mt-6 inline-block bg-slate-900 border border-slate-800 text-xs px-4 py-2 rounded-full text-gray-500 font-bold uppercase tracking-widest">
+                <div class="mt-6 inline-block bg-slate-900 border border-slate-800 text-[10px] sm:text-xs px-4 py-2 rounded-full text-gray-500 font-bold uppercase tracking-widest">
                     Roster Data Pending
                 </div>
             </div>
@@ -318,8 +311,8 @@
 
                 card.innerHTML = `
                     <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
-                        <h2 class="text-lg sm:text-xl font-black tracking-wide text-crest-gold">${groupName}</h2>
-                        <span class="text-[9px] sm:text-[10px] uppercase bg-slate-800 text-gray-400 px-2 sm:px-2.5 py-1 rounded-full font-bold">3 Matches</span>
+                        <h2 class="text-base sm:text-lg lg:text-xl font-black tracking-wide text-crest-gold">${groupName}</h2>
+                        <span class="text-[9px] sm:text-[10px] uppercase bg-slate-800 text-gray-400 px-2 sm:px-2.5 py-1 rounded-full font-bold shrink-0">3 Matches</span>
                     </div>
                     <div class="space-y-2.5 sm:space-y-3">
                         ${matchesHTML}
@@ -350,7 +343,7 @@
 
             if (filtered.length === 0) {
                 listContainer.innerHTML = `
-                    <div class="col-span-full text-center py-12 text-gray-500 text-sm">
+                    <div class="col-span-full text-center py-12 text-gray-500 text-xs sm:text-sm">
                         <i class="fa-regular fa-calendar-times text-3xl mb-2 block"></i>
                         No matching matches found for "${searchVal}".
                     </div>
@@ -368,37 +361,37 @@
                 matchCard.innerHTML = `
                     <div class="flex items-start justify-between gap-2 mb-3">
                         <div>
-                            <span class="text-[10px] font-extrabold text-gray-500 uppercase tracking-wide">${m.match}</span>
+                            <span class="text-[9px] sm:text-[10px] font-extrabold text-gray-500 uppercase tracking-wide">${m.match}</span>
                             <div class="text-xs font-bold text-crest-gold flex items-center gap-1 mt-0.5">
                                 <i class="fa-regular fa-clock text-[10px]"></i>
                                 <span>${m.time}</span>
                             </div>
                         </div>
-                        <span class="text-[10px] uppercase bg-slate-800 text-gray-400 px-2 py-0.5 rounded-full font-bold">
+                        <span class="text-[9px] sm:text-[10px] uppercase bg-slate-800 text-gray-400 px-2 py-0.5 rounded-full font-bold shrink-0">
                             Group ${m.group}
                         </span>
                     </div>
 
                     <div class="bg-slate-950/40 border border-slate-800/80 rounded-lg p-2.5 mb-3 space-y-1">
                         <div class="flex justify-between items-center text-xs">
-                            <span class="font-semibold ${isJyv1 ? 'text-crest-gold font-bold' : 'text-gray-300'}">${m.team1}</span>
-                            <span class="text-[9px] text-gray-500 font-extrabold">T1</span>
+                            <span class="font-semibold truncate pr-2 ${isJyv1 ? 'text-crest-gold font-bold' : 'text-gray-300'}">${m.team1}</span>
+                            <span class="text-[8px] sm:text-[9px] text-gray-500 font-extrabold shrink-0">T1</span>
                         </div>
                         <div class="text-[10px] text-crest-gold opacity-50 font-black text-center py-0.5">VS</div>
                         <div class="flex justify-between items-center text-xs">
-                            <span class="font-semibold ${isJyv2 ? 'text-crest-gold font-bold' : 'text-gray-300'}">${m.team2}</span>
-                            <span class="text-[9px] text-gray-500 font-extrabold">T2</span>
+                            <span class="font-semibold truncate pr-2 ${isJyv2 ? 'text-crest-gold font-bold' : 'text-gray-300'}">${m.team2}</span>
+                            <span class="text-[8px] sm:text-[9px] text-gray-500 font-extrabold shrink-0">T2</span>
                         </div>
                     </div>
 
-                    <div class="border-t border-slate-800 pt-2.5 space-y-1 text-[11px] text-gray-400">
+                    <div class="border-t border-slate-800 pt-2.5 space-y-1.5 text-[11px] text-gray-400">
                         <div class="flex items-center gap-1.5 truncate">
-                            <i class="fa-solid fa-location-dot text-gray-500 text-[10px]"></i>
-                            <span class="truncate">${m.field}</span>
+                            <i class="fa-solid fa-location-dot text-gray-500 text-[10px] shrink-0"></i>
+                            <span class="truncate" title="${m.field}">${m.field}</span>
                         </div>
-                        <div class="flex items-center gap-1.5">
-                            <i class="fa-solid fa-user-shield text-gray-500 text-[10px]"></i>
-                            <span>Umpire: <strong class="text-gray-300">${m.umpire}</strong></span>
+                        <div class="flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-user-shield text-gray-500 text-[10px] shrink-0"></i>
+                            <span class="truncate">Umpire: <strong class="text-gray-300">${m.umpire}</strong></span>
                         </div>
                     </div>
                 `;
@@ -410,9 +403,9 @@
         function switchScheduleDay(day) {
             currentActiveDay = day;
             document.querySelectorAll("[id^='day-btn-']").forEach(btn => {
-                btn.className = "px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800 transition";
+                btn.className = "inline-block px-4 py-2.5 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800 transition cursor-pointer";
             });
-            document.getElementById(`day-btn-${day}`).className = "px-4 py-2 text-xs font-bold rounded-md bg-crest-gold text-slate-900 shadow transition";
+            document.getElementById(`day-btn-${day}`).className = "inline-block px-4 py-2.5 text-xs font-bold rounded-md bg-crest-gold text-slate-900 shadow transition cursor-pointer";
             renderSchedules();
         }
 
@@ -434,30 +427,30 @@
 
             // Reset all buttons to standard Slate colors
             [btnMain, btnQual, btnFixtures, btnSquad].forEach(btn => {
-                btn.className = "w-full px-4 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base";
+                btn.className = "w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base cursor-pointer";
             });
 
             // Set active button style and hide/show sections
             if (stage === 'main') {
-                btnMain.className = "w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base";
+                btnMain.className = "w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base cursor-pointer";
                 groupsContainer.className = "block";
                 fixturesScheduleContainer.className = "hidden";
                 squadsContainer.className = "hidden";
                 renderFixtures('main');
             } else if (stage === 'qualifier') {
-                btnQual.className = "w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base";
+                btnQual.className = "w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base cursor-pointer";
                 groupsContainer.className = "block";
                 fixturesScheduleContainer.className = "hidden";
                 squadsContainer.className = "hidden";
                 renderFixtures('qualifier');
             } else if (stage === 'fixtures') {
-                btnFixtures.className = "w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base";
+                btnFixtures.className = "w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base cursor-pointer";
                 groupsContainer.className = "hidden";
                 fixturesScheduleContainer.className = "block";
                 squadsContainer.className = "hidden";
                 switchScheduleDay('Friday');
             } else if (stage === 'team-squad') {
-                btnSquad.className = "w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base";
+                btnSquad.className = "w-full px-3 py-3 sm:py-3.5 font-bold rounded-xl bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base cursor-pointer";
                 groupsContainer.className = "hidden";
                 fixturesScheduleContainer.className = "hidden";
                 squadsContainer.className = "block";
