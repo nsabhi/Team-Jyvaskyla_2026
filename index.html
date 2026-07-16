@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finn Bangla Cricket 2026 - Team Jyväskylä Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for dynamic icons in the new sections -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Custom Colors matching the logo */
         .bg-crest-dark { background-color: #0d121d; }
@@ -17,17 +19,17 @@
 </head>
 <body class="bg-crest-dark text-white font-sans min-h-screen pb-12">
 
-    <!-- Header: Dynamic height, padding, and text sizing for mobile vs desktop -->
+    <!-- Header: Dynamic height, padding, and text sizing -->
     <header class="bg-crest-accent-blue border-b-4 border-crest-gold text-white py-6 md:py-8 text-center shadow-2xl mb-6 md:mb-8 relative overflow-hidden">
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
         
         <div class="relative z-10 flex flex-col items-center gap-3 md:gap-4 max-w-4xl mx-auto px-4">
             <!-- Responsive Logo Container -->
             <div class="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full border-4 border-crest-gold overflow-hidden bg-slate-900 shadow-xl flex items-center justify-center transition-transform hover:scale-105 duration-300">
-                <img src="Logo_image.png" alt="Team Jyväskylä Logo" class="w-full h-full object-cover">
+                <img src="Logo_image.png" alt="Team Jyväskylä Logo" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/200x200/172033/ecb131?text=FBCT'">
             </div>
 
-            <!-- Title: Scales dynamically from mobile (text-2xl) to desktop (text-5xl) -->
+            <!-- Title: Scales dynamically -->
             <div>
                 <h1 class="text-2xl sm:text-3xl md:text-5xl font-black uppercase tracking-wider text-crest-gold drop-shadow-md leading-tight">
                     Finn Bangla Cricket 2026
@@ -42,23 +44,89 @@
     <!-- Main Wrapper with responsive padding -->
     <main class="max-w-6xl mx-auto px-3 sm:px-6">
         
-        <!-- Tab Navigation: Stacks vertically on mobile, horizontally on tablets+ -->
-        <div class="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 mb-8">
-            <button onclick="switchTab('main')" id="btn-main" class="w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-sm md:text-base">
+        <!-- Tab Navigation: 4 Buttons beside each other (responsive grids) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 mb-8">
+            <button onclick="switchTab('main')" id="btn-main" class="w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base">
                 Main Tournament Groups
             </button>
-            <button onclick="switchTab('qualifier')" id="btn-qualifier" class="w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-sm md:text-base">
+            <button onclick="switchTab('qualifier')" id="btn-qualifier" class="w-full px-4 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base">
                 Qualifier Groups
+            </button>
+            <button onclick="switchTab('fixtures')" id="btn-fixtures" class="w-full px-4 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base">
+                Fixtures
+            </button>
+            <button onclick="switchTab('team-squad')" id="btn-team-squad" class="w-full px-4 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base">
+                Team Squad
             </button>
         </div>
 
-        <!-- Fixtures Grid: 1 column on mobile, 2 columns on tablets, 3 columns on desktop -->
-        <div id="fixtures-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            <!-- Cards generated dynamically -->
+        <!-- Groups View Container (Main / Qualifier Groups) -->
+        <div id="groups-container" class="block">
+            <!-- Fixtures Grid: 1 column on mobile, 2 on tablets, 3 on desktop -->
+            <div id="fixtures-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                <!-- Cards generated dynamically -->
+            </div>
         </div>
+
+        <!-- Fixtures View Container (Houses Match Schedules with filters) -->
+        <div id="fixtures-schedule-container" class="hidden space-y-8">
+            <div class="bg-crest-card border-t-4 border-crest-gold rounded-xl p-4 sm:p-6 shadow-lg">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-black text-crest-gold tracking-wide uppercase">Match Schedules &amp; Stages</h2>
+                        <p class="text-xs text-gray-400 mt-1">Full schedule broken down by daily timetables, group rounds, and final brackets.</p>
+                    </div>
+                    
+                    <!-- Search inside schedules -->
+                    <div class="relative w-full md:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="schedule-search" oninput="filterSchedules()" placeholder="Search team, venue, or group..." class="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs focus:outline-none focus:border-crest-gold text-white placeholder-gray-500">
+                    </div>
+                </div>
+
+                <!-- Sub-tabs to filter (Including Friday, Saturday, Sunday, and your stage requests) -->
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <button onclick="switchScheduleDay('Friday')" id="day-btn-Friday" class="px-4 py-2 text-xs font-bold rounded-md bg-crest-gold text-slate-900 shadow">Friday</button>
+                    <button onclick="switchScheduleDay('Saturday')" id="day-btn-Saturday" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Saturday</button>
+                    <button onclick="switchScheduleDay('Sunday')" id="day-btn-Sunday" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Sunday</button>
+                    <!-- Stage tabs added right after Sunday -->
+                    <button onclick="switchScheduleDay('Qualify_Round')" id="day-btn-Qualify_Round" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Qualify Round</button>
+                    <button onclick="switchScheduleDay('Main_Round')" id="day-btn-Main_Round" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Main Round</button>
+                    <button onclick="switchScheduleDay('Knockout_Round')" id="day-btn-Knockout_Round" class="px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800">Knockout Round</button>
+                </div>
+
+                <!-- Live match counter -->
+                <div class="text-xs text-gray-400 mb-4">
+                    Showing <span id="schedule-match-count" class="text-crest-gold font-bold">0</span> matches
+                </div>
+
+                <!-- Match List Container -->
+                <div id="schedule-matches-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Loaded dynamically via JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Squad View Container (Kept clean and empty for future squad data insertion) -->
+        <div id="squads-container" class="hidden space-y-8">
+            <div class="bg-crest-card border-t-4 border-crest-gold rounded-xl p-8 text-center shadow-lg max-w-2xl mx-auto">
+                <div class="text-crest-gold text-5xl mb-4">
+                    <i class="fa-solid fa-users-rectangle"></i>
+                </div>
+                <h2 class="text-2xl font-black tracking-wide uppercase text-crest-gold">Team Squads</h2>
+                <p class="text-sm text-gray-400 mt-2 max-w-md mx-auto">
+                    The rosters and player profiles for the tournament teams are currently being processed and will be published here soon.
+                </p>
+                <div class="mt-6 inline-block bg-slate-900 border border-slate-800 text-xs px-4 py-2 rounded-full text-gray-500 font-bold uppercase tracking-widest">
+                    Roster Data Pending
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <script>
+        // Core Groups Dataset
         const tournamentData = {
             main: {
                 "Group A": ["Royal Strikers", "Qualifier Rank 3", "Qualifier Rank 14"],
@@ -85,6 +153,134 @@
             }
         };
 
+        // Match schedules dataset shifted completely under "Fixtures"
+        const scheduleData = {
+            "Friday": [
+                {"field": "Field 1: Palokka Grass", "match": "Match 1", "time": "08:30 - 10:00", "group": "F", "team1": "Espoo Eagles", "team2": "United Tampere", "umpire": "Organizer"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 3", "time": "10:00 - 11:30", "group": "E", "team1": "Uusimaa Challengers", "team2": "Nordic Capitals", "umpire": "Espoo Eagles"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 5", "time": "11:30 - 13:00", "group": "I", "team1": "Savon Royals", "team2": "Kotka Mavericks", "umpire": "Uusimaa Challengers"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 7", "time": "14:00 - 15:30", "group": "A", "team1": "Vanha Kaupunki", "team2": "Stadin Warriors", "umpire": "United Tampere"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 9", "time": "15:30 - 17:00", "group": "I", "team1": "Domus Tampere", "team2": "Savon Royals", "umpire": "Vanha Kaupunki"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 11", "time": "17:00 - 18:30", "group": "F", "team1": "Sipoo Eleven", "team2": "Espoo Eagles", "umpire": "Savon Royals"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 13", "time": "18:30 - 20:00", "group": "A", "team1": "Stadin Warriors", "team2": "Pukinmäki Sporting Club", "umpire": "Espoo Eagles"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 2", "time": "08:30 - 10:00", "group": "H", "team1": "Jyväskylän Tigers", "team2": "Helsinki Boys 2.0", "umpire": "Organizer"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 4", "time": "10:00 - 11:30", "group": "H", "team1": "Oulun Arctic Tigers", "team2": "Jyväskylän Tigers", "umpire": "Nordic Capitals"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 6", "time": "11:30 - 13:00", "group": "E", "team1": "Saimaan Gladiators", "team2": "Nordic Capitals", "umpire": "Oulun Arctic Tigers"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 8", "time": "14:00 - 15:30", "group": "B", "team1": "Kamppi Knight Riders", "team2": "Turku Bangla Club", "umpire": "Domus Tampere"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 10", "time": "15:30 - 17:00", "group": "E", "team1": "Saimaan Gladiators", "team2": "Uusimaa Challengers", "umpire": "Turku Bangla Club"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 12", "time": "17:00 - 18:30", "group": "A", "team1": "Vanha Kaupunki", "team2": "Pukinmäki Sporting Club", "umpire": "Saimaan Gladiators"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 14", "time": "18:30 - 20:00", "group": "F", "team1": "Sipoo Eleven", "team2": "United Tampere", "umpire": "Vanha Kaupunki"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 15", "time": "08:30 - 10:00", "group": "I", "team1": "Domus Tampere", "team2": "Kotka Mavericks", "umpire": "Organizer"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 17", "time": "10:00 - 11:30", "group": "G", "team1": "Oulu Strikers", "team2": "HCC Tigers", "umpire": "Kotka Mavericks"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 19", "time": "11:30 - 13:00", "group": "B", "team1": "Kamppi Knight Riders", "team2": "Stadin XI", "umpire": "Oulu Strikers"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 21", "time": "14:00 - 15:30", "group": "G", "team1": "Oulu Strikers", "team2": "Helsinki Fighter", "umpire": "Stadin XI"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 23", "time": "15:30 - 17:00", "group": "D", "team1": "Helsinki Gladiators", "team2": "Vantaa Super Kings", "umpire": "Helsinki Fighter"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 25", "time": "17:00 - 18:30", "group": "G", "team1": "HCC Tigers", "team2": "Helsinki Fighter", "umpire": "Helsinki Gladiators"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 27", "time": "18:30 - 20:00", "group": "D", "team1": "Vantaa Super Kings", "team2": "Espoo Scorpions", "umpire": "HCC Tigers"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 16", "time": "08:30 - 10:00", "group": "C", "team1": "Empire Helsinki", "team2": "Salo Kings", "umpire": "Organizer"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 18", "time": "10:00 - 11:30", "group": "C", "team1": "Salo Kings", "team2": "Team Jyväskylä", "umpire": "Empire Helsinki"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 20", "time": "11:30 - 13:00", "group": "C", "team1": "Empire Helsinki", "team2": "Team Jyväskylä", "umpire": "Salo Kings"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 22", "time": "14:00 - 15:30", "group": "B", "team1": "Turku Bangla Club", "team2": "Stadin XI", "umpire": "Empire Helsinki"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 24", "time": "15:30 - 17:00", "group": "D", "team1": "Helsinki Gladiators", "team2": "Espoo Scorpions", "umpire": "Stadin XI"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 26", "time": "17:00 - 18:30", "group": "H", "team1": "Helsinki Boys 2.0", "team2": "Oulun Arctic Tigers", "umpire": "Espoo Scorpions"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 28", "time": "18:30 - 20:00", "group": "B", "team1": "Kuopio Tigers", "team2": "Helsinki Tigers", "umpire": "Helsinki Boys 2.0"}
+            ],
+            "Saturday": [
+                {"field": "Field 1: Palokka Grass", "match": "Match 1", "time": "08:30 - 10:00", "group": "H", "team1": "Helsinki Boys", "team2": "Qualifier Rank 2", "umpire": "Organizer"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 3", "time": "10:00 - 11:30", "group": "B", "team1": "Helsinki Tigers", "team2": "Qualifier Rank 11", "umpire": "Qualifier Rank 2"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 5", "time": "11:30 - 13:00", "group": "G", "team1": "Helsinki Fighters", "team2": "Qualifier Rank 9", "umpire": "Helsinki Tigers"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 7", "time": "13:00 - 14:30", "group": "A", "team1": "Qualifier Rank 3", "team2": "Qualifier Rank 14", "umpire": "Malmi Supernova"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 9", "time": "14:30 - 16:00", "group": "D", "team1": "Malmi Supernova", "team2": "Qualifier Rank 8", "umpire": "Qualifier Rank 14"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 11", "time": "16:00 - 17:30", "group": "C", "team1": "Team Jyväskylä", "team2": "Qualifier Rank 1", "umpire": "Malmi Supernova"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 13", "time": "17:30 - 19:00", "group": "B", "team1": "Kuopio Tigers", "team2": "Helsinki Tigers", "umpire": "Qualifier Rank 3"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 15", "time": "19:00 - 20:30", "group": "A", "team1": "Royal Strikers", "team2": "Qualifier Rank 3", "umpire": "Helsinki Boys"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 2", "time": "08:30 - 10:00", "group": "F", "team1": "Southern Kings", "team2": "Qualifier Rank 6", "umpire": "Organizer"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 4", "time": "10:00 - 11:30", "group": "H", "team1": "Qualifier Rank 2", "team2": "Qualifier Rank 7", "umpire": "Southern Kings"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 6", "time": "11:30 - 13:00", "group": "F", "team1": "Team Tampere", "team2": "Southern Kings", "umpire": "Qualifier Rank 7"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 8", "time": "13:00 - 14:30", "group": "J", "team1": "Qualifier Rank 4", "team2": "Qualifier Rank 15", "umpire": "Tampere Bengal"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 10", "time": "14:30 - 16:00", "group": "G", "team1": "Tampere Bengal", "team2": "Qualifier Rank 9", "umpire": "Qualifier Rank 15"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 12", "time": "16:00 - 17:30", "group": "D", "team1": "Qualifier Rank 5", "team2": "Qualifier Rank 8", "umpire": "Tampere Bengal"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 14", "time": "17:30 - 19:00", "group": "C", "team1": "Qualifier Rank 1", "team2": "Qualifier Rank 12", "umpire": "Qualifier Rank 5"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 16", "time": "19:00 - 20:30", "group": "H", "team1": "Helsinki Boys", "team2": "Qualifier Rank 7", "umpire": "Team Jyväskylä"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 17", "time": "08:30 - 10:00", "group": "J", "team1": "Pasila Vikings", "team2": "Qualifier Rank 4", "umpire": "Organizer"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 19", "time": "10:00 - 11:30", "group": "I", "team1": "Old Boys Return", "team2": "Qualifier Rank 13", "umpire": "Pasila Vikings"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 21", "time": "11:30 - 13:00", "group": "I", "team1": "Turku Tigers", "team2": "Old Boys Return", "umpire": "Qualifier Rank 13"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 23", "time": "13:00 - 14:30", "group": "E", "team1": "Qualifier Rank 10", "team2": "N/A", "umpire": "Turku Tigers"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 25", "time": "14:30 - 16:00", "group": "J", "team1": "Pasila Vikings", "team2": "Qualifier Rank 15", "umpire": "Qualifier Rank 10"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 27", "time": "16:00 - 17:30", "group": "E", "team1": "Otaniemi Mavericks", "team2": "Qualifier Rank 10", "umpire": "Pasila Vikings"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 29", "time": "17:30 - 19:00", "group": "A", "team1": "Royal Strikers", "team2": "Qualifier Rank 14", "umpire": "Otaniemi Mavericks"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 18", "time": "08:30 - 10:00", "group": "E", "team1": "Vaasan Royal", "team2": "N/A", "umpire": "Organizer"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 20", "time": "10:00 - 11:30", "group": "E", "team1": "Otaniemi Mavericks", "team2": "Vaasan Royal", "umpire": "N/A"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 22", "time": "11:30 - 13:00", "group": "F", "team1": "Team Tampere", "team2": "Qualifier Rank 6", "umpire": "Vaasan Royal"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 24", "time": "13:00 - 14:30", "group": "G", "team1": "Tampere Bengal", "team2": "Helsinki Fighters", "umpire": "Team Tampere"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 26", "time": "14:30 - 16:00", "group": "D", "team1": "Malmi Supernova", "team2": "Qualifier Rank 5", "umpire": "Helsinki Fighters"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 28", "time": "16:00 - 17:30", "group": "C", "team1": "Team Jyväskylä", "team2": "Qualifier Rank 12", "umpire": "Malmi Supernova"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 30", "time": "17:30 - 19:00", "group": "I", "team1": "Turku Tigers", "team2": "Qualifier Rank 13", "umpire": "Team Jyväskylä"}
+            ],
+            "Sunday": [
+                {"field": "Field 1: Palokka Grass", "match": "Match 1", "time": "09:00 - 10:30", "group": "Round 16", "team1": "Position 1", "team2": "Position 16", "umpire": "N/A"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 3", "time": "10:30 - 12:00", "group": "Round 16", "team1": "Position 2", "team2": "Position 15", "umpire": "N/A"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 1", "time": "13:00 - 14:30", "group": "Quarter-final", "team1": "Super Sixteen 1", "team2": "Super Sixteen 8", "umpire": "N/A"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 3", "time": "14:30 - 16:00", "group": "Quarter-final", "team1": "Super Sixteen 2", "team2": "Super Sixteen 7", "umpire": "N/A"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 1", "time": "16:30 - 18:30", "group": "Semi-final", "team1": "Quarter-Final 1", "team2": "Quarter-Final 4", "umpire": "N/A"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 1", "time": "19:00 - 20:30", "group": "FINAL", "team1": "TBC", "team2": "TBC", "umpire": "N/A"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 2", "time": "09:00 - 10:30", "group": "Round 16", "team1": "Position 3", "team2": "Position 14", "umpire": "N/A"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 4", "time": "10:30 - 12:00", "group": "Round 16", "team1": "Position 4", "team2": "Position 13", "umpire": "N/A"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 2", "time": "13:00 - 14:30", "group": "Quarter-final", "team1": "Super Sixteen 3", "team2": "Super Sixteen 6", "umpire": "N/A"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 4", "time": "14:30 - 16:00", "group": "Quarter-final", "team1": "Super Sixteen 4", "team2": "Super Sixteen 5", "umpire": "N/A"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 2", "time": "16:30 - 18:30", "group": "Semi-final", "team1": "Quarter-Final 2", "team2": "Quarter-Final 3", "umpire": "N/A"},
+                {"field": "Field 3: Vitaniemi Grass 5", "match": "Match 5", "time": "09:00 - 10:30", "group": "Round 16", "team1": "Position 5", "team2": "Position 12", "umpire": "N/A"},
+                {"field": "Field 3: Vitaniemi Grass 5", "match": "Match 7", "time": "10:30 - 12:00", "group": "Round 16", "team1": "Position 6", "team2": "Position 11", "umpire": "N/A"},
+                {"field": "Field 4: Vitaniemi Grass 6", "match": "Match 6", "time": "09:00 - 10:30", "group": "Round 16", "team1": "Position 7", "team2": "Position 10", "umpire": "N/A"},
+                {"field": "Field 4: Vitaniemi Grass 6", "match": "Match 8", "time": "10:30 - 12:00", "group": "Round 16", "team1": "Position 8", "team2": "Position 9", "umpire": "N/A"}
+            ],
+            // Added dedicated Qualifier Round matchups
+            "Qualify_Round": [
+                {"field": "Field 1: Palokka Grass", "match": "Match 1", "time": "08:30 - 10:00", "group": "A", "team1": "Vanha Kaupunki", "team2": "Stadin Warriors", "umpire": "Pukinmäki SC"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 2", "time": "10:00 - 11:30", "group": "A", "team1": "Stadin Warriors", "team2": "Pukinmäki Sporting Club", "umpire": "Vanha Kaupunki"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 3", "time": "08:30 - 10:00", "group": "B", "team1": "Metro Strikers", "team2": "Kamppi Knight Riders", "umpire": "Turku Bangla"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 4", "time": "10:00 - 11:30", "group": "B", "team1": "Kamppi Knight Riders", "team2": "Turku Bangla", "umpire": "Metro Strikers"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 5", "time": "08:30 - 10:00", "group": "C", "team1": "Pietarsaari Sporting Club", "team2": "Team Joensuu", "umpire": "ITIS Sports"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 6", "time": "10:00 - 11:30", "group": "C", "team1": "Team Joensuu", "team2": "ITIS Sports", "umpire": "Pietarsaari SC"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 7", "time": "08:30 - 10:00", "group": "D", "team1": "Lahti Lions", "team2": "Jyväskylä", "umpire": "Myyrmäki Kings"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 8", "time": "10:00 - 11:30", "group": "D", "team1": "Jyväskylä", "team2": "Myyrmäki Kings", "umpire": "Lahti Lions"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 9", "time": "11:30 - 13:00", "group": "E", "team1": "Saimaan Gladiators", "team2": "Uusimaa Challengers", "umpire": "Nordic Capitals"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 10", "time": "11:30 - 13:00", "group": "F", "team1": "Sipoo Eleven", "team2": "Espoo Eagles", "umpire": "United Tampere"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 11", "time": "11:30 - 13:00", "group": "G", "team1": "Åbo Cowboys", "team2": "Seinäjoki Gladiators", "umpire": "Kokkola Falcon"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 12", "time": "11:30 - 13:00", "group": "H", "team1": "Oulun Arctic Tiger", "team2": "Jyväskylän Tigers", "umpire": "Helsinki Boys 2.0"}
+            ],
+            // Added dedicated Main Tournament Round matchups
+            "Main_Round": [
+                {"field": "Field 1: Palokka Grass", "match": "Match 1", "time": "13:00 - 14:30", "group": "A", "team1": "Royal Strikers", "team2": "Qualifier Rank 3", "umpire": "Organizer"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 2", "time": "14:30 - 16:00", "group": "A", "team1": "Qualifier Rank 3", "team2": "Qualifier Rank 14", "umpire": "Royal Strikers"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 3", "time": "13:00 - 14:30", "group": "B", "team1": "Kuopion Tigers", "team2": "Helsinki Tigers", "umpire": "Organizer"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 4", "time": "14:30 - 16:00", "group": "B", "team1": "Helsinki Tigers", "team2": "Qualifier Rank 11", "umpire": "Kuopion Tigers"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 5", "time": "13:00 - 14:30", "group": "C", "team1": "Team Jyväskylä", "team2": "Qualifier Rank 1", "umpire": "Organizer"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 6", "time": "14:30 - 16:00", "group": "C", "team1": "Qualifier Rank 1", "team2": "Qualifier Rank 12", "umpire": "Team Jyväskylä"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 7", "time": "13:00 - 14:30", "group": "D", "team1": "Malmi Supernova", "team2": "Qualifier Rank 5", "umpire": "Organizer"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 8", "time": "14:30 - 16:00", "group": "D", "team1": "Qualifier Rank 5", "team2": "Qualifier Rank 8", "umpire": "Malmi Supernova"},
+                {"field": "Field 1: Palokka Grass", "match": "Match 9", "time": "16:00 - 17:30", "group": "E", "team1": "Otaniemi Mavericks", "team2": "Vaasan Royal Bangals", "umpire": "Qualifier Rank 10"},
+                {"field": "Field 2: Palokka Artificial", "match": "Match 10", "time": "16:00 - 17:30", "group": "F", "team1": "Team Tampere", "team2": "Southern Kings", "umpire": "Qualifier Rank 6"},
+                {"field": "Field 3: Tikkakoski Gravel", "match": "Match 11", "time": "16:00 - 17:30", "group": "G", "team1": "Tampere Bengal Sporting Club", "team2": "Helsinki Fighters", "umpire": "Qualifier Rank 9"},
+                {"field": "Field 4: Tikkakoski Artificial", "match": "Match 12", "time": "16:00 - 17:30", "group": "H", "team1": "Helsinki Boys", "team2": "Qualifier Rank 2", "umpire": "Qualifier Rank 7"}
+            ],
+            // Added dedicated Sunday Bracket/Knockouts
+            "Knockout_Round": [
+                {"field": "Field 1: Palokka Grass", "match": "Super 16 - M1", "time": "09:00 - 10:30", "group": "Round of 16", "team1": "Position 1", "team2": "Position 16", "umpire": "TBD"},
+                {"field": "Field 2: Palokka Artificial", "match": "Super 16 - M2", "time": "09:00 - 10:30", "group": "Round of 16", "team1": "Position 3", "team2": "Position 14", "umpire": "TBD"},
+                {"field": "Field 3: Vitaniemi Grass 5", "match": "Super 16 - M3", "time": "09:00 - 10:30", "group": "Round of 16", "team1": "Position 5", "team2": "Position 12", "umpire": "TBD"},
+                {"field": "Field 4: Vitaniemi Grass 6", "match": "Super 16 - M4", "time": "09:00 - 10:30", "group": "Round of 16", "team1": "Position 7", "team2": "Position 10", "umpire": "TBD"},
+                {"field": "Field 1: Palokka Grass", "match": "Quarter-Final 1", "time": "13:00 - 14:30", "group": "Quarter-finals", "team1": "Winner Match 1", "team2": "Winner Match 8", "umpire": "Neutral Team"},
+                {"field": "Field 2: Palokka Artificial", "match": "Quarter-Final 2", "time": "13:00 - 14:30", "group": "Quarter-finals", "team1": "Winner Match 3", "team2": "Winner Match 6", "umpire": "Neutral Team"},
+                {"field": "Field 1: Palokka Grass", "match": "Semi-Final 1", "time": "16:30 - 18:30", "group": "Semi-finals", "team1": "Winner QF 1", "team2": "Winner QF 4", "umpire": "Neutral Panels"},
+                {"field": "Field 2: Palokka Artificial", "match": "Semi-Final 2", "time": "16:30 - 18:30", "group": "Semi-finals", "team1": "Winner QF 2", "team2": "Winner QF 3", "umpire": "Neutral Panels"},
+                {"field": "Field 1: Palokka Grass", "match": "Grand Final", "time": "19:00 - 21:00", "group": "Final", "team1": "Winner SF 1", "team2": "Winner SF 2", "umpire": "Official Panel"}
+            ]
+        };
+
+        let currentActiveDay = "Friday";
+
+        // Generate Match matchups dynamically
         function generate3TeamFixtures(teams) {
             return [
                 { home: teams[0], away: teams[1], matchNo: 1 },
@@ -93,6 +289,7 @@
             ];
         }
 
+        // Render Groups stage
         function renderFixtures(stage) {
             const grid = document.getElementById('fixtures-grid');
             grid.innerHTML = '';
@@ -103,12 +300,10 @@
                 const fixtures = generate3TeamFixtures(teams);
 
                 const card = document.createElement('div');
-                // Added touch-friendly subtle scaling (scale-[1.02]) so mobile users don't accidentally zoom too much when scrolling
                 card.className = "bg-crest-card border-t-4 border-crest-gold rounded-xl p-4 sm:p-5 shadow-lg flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl cursor-pointer";
 
                 let matchesHTML = '';
                 fixtures.forEach(match => {
-                    // Highlight Team Jyväskylä matches in gold
                     const isJyvHome = match.home.includes("Jyväskylä");
                     const isJyvAway = match.away.includes("Jyväskylä");
 
@@ -134,21 +329,145 @@
             }
         }
 
+        // Render schedule match schedules inside "Fixtures" tab
+        function renderSchedules() {
+            const listContainer = document.getElementById("schedule-matches-list");
+            const searchVal = document.getElementById("schedule-search").value.toLowerCase().trim();
+            listContainer.innerHTML = "";
+
+            const activeDayMatches = scheduleData[currentActiveDay];
+
+            const filtered = activeDayMatches.filter(m => {
+                return searchVal === "" ||
+                    m.team1.toLowerCase().includes(searchVal) ||
+                    m.team2.toLowerCase().includes(searchVal) ||
+                    m.umpire.toLowerCase().includes(searchVal) ||
+                    m.group.toLowerCase().includes(searchVal) ||
+                    m.field.toLowerCase().includes(searchVal);
+            });
+
+            document.getElementById("schedule-match-count").textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="col-span-full text-center py-12 text-gray-500 text-sm">
+                        <i class="fa-regular fa-calendar-times text-3xl mb-2 block"></i>
+                        No matching matches found for "${searchVal}".
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(m => {
+                const matchCard = document.createElement("div");
+                matchCard.className = "bg-slate-900 border border-slate-800 hover:border-slate-700 p-4 rounded-xl shadow transition duration-200 flex flex-col justify-between";
+
+                const isJyv1 = m.team1.includes("Jyväskylä");
+                const isJyv2 = m.team2.includes("Jyväskylä");
+
+                matchCard.innerHTML = `
+                    <div class="flex items-start justify-between gap-2 mb-3">
+                        <div>
+                            <span class="text-[10px] font-extrabold text-gray-500 uppercase tracking-wide">${m.match}</span>
+                            <div class="text-xs font-bold text-crest-gold flex items-center gap-1 mt-0.5">
+                                <i class="fa-regular fa-clock text-[10px]"></i>
+                                <span>${m.time}</span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] uppercase bg-slate-800 text-gray-400 px-2 py-0.5 rounded-full font-bold">
+                            Group ${m.group}
+                        </span>
+                    </div>
+
+                    <div class="bg-slate-950/40 border border-slate-800/80 rounded-lg p-2.5 mb-3 space-y-1">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-semibold ${isJyv1 ? 'text-crest-gold font-bold' : 'text-gray-300'}">${m.team1}</span>
+                            <span class="text-[9px] text-gray-500 font-extrabold">T1</span>
+                        </div>
+                        <div class="text-[10px] text-crest-gold opacity-50 font-black text-center py-0.5">VS</div>
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-semibold ${isJyv2 ? 'text-crest-gold font-bold' : 'text-gray-300'}">${m.team2}</span>
+                            <span class="text-[9px] text-gray-500 font-extrabold">T2</span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-800 pt-2.5 space-y-1 text-[11px] text-gray-400">
+                        <div class="flex items-center gap-1.5 truncate">
+                            <i class="fa-solid fa-location-dot text-gray-500 text-[10px]"></i>
+                            <span class="truncate">${m.field}</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-shield text-gray-500 text-[10px]"></i>
+                            <span>Umpire: <strong class="text-gray-300">${m.umpire}</strong></span>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(matchCard);
+            });
+        }
+
+        // Sub-tabs switcher for Days under Fixtures Schedule view
+        function switchScheduleDay(day) {
+            currentActiveDay = day;
+            document.querySelectorAll("[id^='day-btn-']").forEach(btn => {
+                btn.className = "px-4 py-2 text-xs font-bold rounded-md bg-slate-900 text-gray-300 hover:bg-slate-800 transition";
+            });
+            document.getElementById(`day-btn-${day}`).className = "px-4 py-2 text-xs font-bold rounded-md bg-crest-gold text-slate-900 shadow transition";
+            renderSchedules();
+        }
+
+        // Realtime typing filter
+        function filterSchedules() {
+            renderSchedules();
+        }
+
+        // Main Tab Switcher Control
         function switchTab(stage) {
             const btnMain = document.getElementById('btn-main');
             const btnQual = document.getElementById('btn-qualifier');
+            const btnFixtures = document.getElementById('btn-fixtures');
+            const btnSquad = document.getElementById('btn-team-squad');
 
+            const groupsContainer = document.getElementById('groups-container');
+            const fixturesScheduleContainer = document.getElementById('fixtures-schedule-container');
+            const squadsContainer = document.getElementById('squads-container');
+
+            // Reset all buttons to standard Slate colors
+            [btnMain, btnQual, btnFixtures, btnSquad].forEach(btn => {
+                btn.className = "w-full px-4 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-xs sm:text-sm md:text-base";
+            });
+
+            // Set active button style and hide/show sections
             if (stage === 'main') {
-                btnMain.className = "w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-sm md:text-base";
-                btnQual.className = "w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-sm md:text-base";
-            } else {
-                btnQual.className = "w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-sm md:text-base";
-                btnMain.className = "w-full sm:w-auto px-6 py-3 font-bold rounded-lg bg-slate-800 text-gray-300 hover:bg-slate-700 transition-all duration-300 shadow-md text-center text-sm md:text-base";
+                btnMain.className = "w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base";
+                groupsContainer.className = "block";
+                fixturesScheduleContainer.className = "hidden";
+                squadsContainer.className = "hidden";
+                renderFixtures('main');
+            } else if (stage === 'qualifier') {
+                btnQual.className = "w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base";
+                groupsContainer.className = "block";
+                fixturesScheduleContainer.className = "hidden";
+                squadsContainer.className = "hidden";
+                renderFixtures('qualifier');
+            } else if (stage === 'fixtures') {
+                btnFixtures.className = "w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base";
+                groupsContainer.className = "hidden";
+                fixturesScheduleContainer.className = "block";
+                squadsContainer.className = "hidden";
+                switchScheduleDay('Friday');
+            } else if (stage === 'team-squad') {
+                btnSquad.className = "w-full px-4 py-3 font-bold rounded-lg bg-crest-gold text-slate-900 transition-all duration-300 shadow-lg transform active:scale-95 text-center text-xs sm:text-sm md:text-base";
+                groupsContainer.className = "hidden";
+                fixturesScheduleContainer.className = "hidden";
+                squadsContainer.className = "block";
             }
-            renderFixtures(stage);
         }
 
-        renderFixtures('main');
+        // On Page Load: Start on 'main' tab
+        window.onload = function() {
+            switchTab('main');
+        };
     </script>
 </body>
 </html>
